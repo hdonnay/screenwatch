@@ -2,27 +2,30 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	//"fmt"
 	"github.com/guelfey/go.dbus"
 	"github.com/hdonnay/screenwatch"
+	"log"
+	"log/syslog"
 	"os"
-	"strings"
+	//"strings"
 )
 
 var (
 	verbose = flag.Bool("v", false, "Be verbose")
 	display string
+	l       *log.Logger
 )
 
 func init() {
+	var err error
 	flag.Parse()
-	if len(flag.Args()) != 2 {
-		fmt.Fprintln(os.Stderr, "not enough arguments")
+	l, err = syslog.NewLogger(syslog.LOG_USER|syslog.LOG_WARNING, 0)
+	if err != nil {
 		os.Exit(-1)
 	}
-	display = strings.Join(strings.Split(flag.Arg(1), "-")[1:], "")
 	if *verbose {
-		fmt.Fprintf(os.Stderr, "sending signal %s %s\n", flag.Arg(0), display)
+		l.Printf("sending signal\n")
 	}
 }
 
@@ -32,35 +35,20 @@ func main() {
 	var call *dbus.Call
 	conn, err = dbus.SystemBus()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error connecting to dbus System Bus: %v\n", err)
-		os.Exit(1)
+		l.Fatalf("Error connecting to dbus System Bus: %v\n", err)
 	}
 	obj := conn.Object(screenwatch.Name, screenwatch.Path)
 	if *verbose {
 		c := obj.Call("Ping", 0)
 		if c.Err != nil {
-			fmt.Fprintln(os.Stderr, "pinged object")
+			l.Println("pinged object")
 		} else {
-			fmt.Fprintln(os.Stderr, "unable to ping object")
+			l.Println("unable to ping object")
 		}
 	}
-	switch flag.Arg(0) {
-	case "connect":
-		if *verbose {
-			fmt.Fprintln(os.Stderr, "sending connect")
-		}
-		call = obj.Call("Connect", 0, display)
-	case "disconnect":
-		if *verbose {
-			fmt.Fprintln(os.Stderr, "sending disconnect")
-		}
-		call = obj.Call("Disconnect", 0, display)
-	default:
-		fmt.Fprintf(os.Stderr, "unrecognized event: %s\n", flag.Arg(0))
-	}
+	call = obj.Call("Change", 0)
 	if call.Err != nil {
-		fmt.Fprintln(os.Stderr, call.Err)
-		os.Exit(1)
+		l.Fatalln(call.Err)
 	}
 	if call.Body[0].(bool) {
 		os.Exit(0)
