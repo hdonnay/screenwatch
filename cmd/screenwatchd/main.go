@@ -38,8 +38,8 @@ func (s swatch) Connect(display string) (bool, *dbus.Error) {
 		}
 	}
 	cmd := exec.Command(xrandr, args...)
+	l.Printf("connecting %s\n", display)
 	if *verbose {
-		l.Printf("connecting %s\n", display)
 		l.Println(cmd.Args)
 	}
 	cmd.Run()
@@ -48,11 +48,11 @@ func (s swatch) Connect(display string) (bool, *dbus.Error) {
 
 func (s swatch) Disconnect(display string) (bool, *dbus.Error) {
 	cmd := exec.Command(xrandr, "--output", display, "--off")
-	cmd.Run()
+	l.Printf("disconnecting %s\n", display)
 	if *verbose {
-		l.Printf("disconnecting %s\n", display)
 		l.Println(cmd.Args)
 	}
+	cmd.Run()
 	return cmd.ProcessState.Success(), nil
 }
 
