@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=screenwatchd
+Comment=Screen Event daemon
+Exec=screenwatchd
