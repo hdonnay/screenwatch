@@ -25,8 +25,7 @@ var (
 
 type Watch interface {
 	Introspect() (string, *dbus.Error)
-	Connect(string) (bool, *dbus.Error)
-	Disconnect(string) (bool, *dbus.Error)
+	Change() (bool, *dbus.Error)
 }
 
 func init() {
@@ -37,16 +36,8 @@ func init() {
 				Name: Name,
 				Methods: []introspect.Method{
 					introspect.Method{
-						Name: "Connect",
+						Name: "Change",
 						Args: []introspect.Arg{
-							introspect.Arg{"display", "s", "in"},
-							introspect.Arg{"exit", "b", "out"},
-						},
-					},
-					introspect.Method{
-						Name: "Disconnect",
-						Args: []introspect.Arg{
-							introspect.Arg{"display", "s", "in"},
 							introspect.Arg{"exit", "b", "out"},
 						},
 					},
