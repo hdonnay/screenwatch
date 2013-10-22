@@ -15,7 +15,6 @@ import (
 var (
 	verbose        = flag.Bool("v", false, "Be (very) verbose")
 	logFile        = flag.String("l", "", "File to log to. If empty, log to stderr")
-	daemonize      = flag.Bool("d", false, "Daemonize after starting")
 	positionalArgs = flag.String("p", "card0-DP-1:--right-of LVDS1", "Comma separated list of <sys name>:<position> pairs")
 
 	conn   *dbus.Conn
