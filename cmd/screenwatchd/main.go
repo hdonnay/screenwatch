@@ -150,15 +150,11 @@ func init() {
 		case "disconnected":
 			s.state[d] = false
 		default:
-			l.Fatalf("unknown status, bailing\n", status)
+			l.Fatalf("unknown status '%s', bailing\n", status)
 		}
 	}
 	if *verbose {
 		fmt.Printf("positional arguments: %v\n", s.pos)
-	}
-
-	if *daemonize {
-		l.Println("FIXME: I would daemonize here, but I'm too dumb right now.")
 	}
 }
 
@@ -173,10 +169,10 @@ func main() {
 	}
 
 	// TODO: clean up nicely when sent SIGTERM et. al.
-	select {
+	//select {
 	//<-stop
 	//teardown()
 	//break
-	}
+	//}
 	os.Exit(0)
 }
