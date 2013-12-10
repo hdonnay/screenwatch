@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"os/signal"
 	"strings"
 )
 
@@ -167,12 +168,13 @@ func main() {
 	if *verbose {
 		l.Printf("Listening on %s / %s\n", screenwatch.Path, screenwatch.Name)
 	}
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, os.Interrupt, os.Kill)
 
 	// TODO: clean up nicely when sent SIGTERM et. al.
-	//select {
-	//<-stop
-	//teardown()
-	//break
-	//}
-	os.Exit(0)
+	for {
+		<-stop
+		//teardown()
+		os.Exit(0)
+	}
 }
